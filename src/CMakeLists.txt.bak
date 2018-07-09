@@ -1,0 +1,44 @@
+find_library(HCNETSDK hcnetsdk ../lib)
+find_library(PLAYM4 PlayCtrl ../lib)
+find_library(AUDIO_RENDER AudioRender ../lib)
+find_library(SUPER_RENDER SuperRender ../lib)
+set(Caffe_DIR /home/lym/code/caffe/build/)                                          
+set(ViennaCL_INCLUDE_DIR /home/lym/local/include/)
+find_package(Caffe)
+include_directories(
+    ${Caffe_INCLUDE_DIRS}
+    ${Caffe_DIR}/install/include/
+    ${Caffe_DIR}/../include/
+    ${ViennaCL_INCLUDE_DIR}
+)
+add_definitions(${Caffe_DEFINITIONS})
+INCLUDE_DIRECTORIES(/home/lym/code/caffe/build/include/)
+INCLUDE_DIRECTORIES(/home/lym/code/caffe/include/caffe/)
+INCLUDE_DIRECTORIES(/home/lym/code/viennacl-dev/)
+
+find_package(OpenCV REQUIRED)
+INCLUDE_DIRECTORIES({OpenCV_INCLUDE_DIRS})
+
+find_package(CURL REQUIRED)
+if(CURL_FOUND)
+include_directories(${CURL_INCLUDE_DIR})
+else(CURL_FOUND)
+message(FATAL_ERROR "curl not found!")
+endif(CURL_FOUND)
+SET(LIBS ${HCNETSDK} ${PLAYM4} ${AUDIO_RENDER} ${SUPER_RENDER} ${OpenCV_LIBS} ${Caffe_LIBRARIES} ${CURL_LIBRARY} libglog.so libpthread.so libX11.so libboost_filesystem.so libboost_system.so)
+
+set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_BUILD_TYPE "Debug")
+#set(CMAKE_BUILD_TYPE "Release")
+SET(CMAKE_CXX_FLAGS "-std=c++11 -Wall -msse4.2 -fPIC -o3")
+INCLUDE_DIRECTORIES(../include)
+INCLUDE_DIRECTORIES(../include/multi_tracker)
+
+file(GLOB_RECURSE SRC_LIST . "*.cpp")  
+AUX_SOURCE_DIRECTORY(. SRC_LIST)
+
+#LINK_DIRECTORIES(../../lib)
+
+ADD_EXECUTABLE(flowhopper ${SRC_LIST})
+
+TARGET_LINK_LIBRARIES(flowhopper ${LIBS})

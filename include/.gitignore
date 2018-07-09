@@ -1,0 +1,9 @@
+atlas/
+boost/
+caffe/
+gflags/
+glog/
+google/
+opencv/
+opencv2/
+viennacl_headfile/
